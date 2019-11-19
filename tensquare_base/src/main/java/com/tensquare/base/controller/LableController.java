@@ -3,9 +3,11 @@ package com.tensquare.base.controller;
 import com.sun.org.apache.regexp.internal.RE;
 import com.tensquare.base.pojo.Lable;
 import com.tensquare.base.service.LableService;
+import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Id;
@@ -52,6 +54,17 @@ public class LableController {
     @RequestMapping(value = "/{Id}", method = RequestMethod.GET)
     public Result findById(@PathVariable String Id) {
         return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), lableService.findById(Id));
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public Result search(@RequestBody Lable lable) {
+        return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), lableService.search(lable));
+    }
+
+    @RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST)
+    public Result search(@RequestBody Lable lable, @PathVariable int page, @PathVariable int size) {
+        Page<Lable> search = lableService.search(lable, page, size);
+        return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), new PageResult<Lable>(search.getTotalElements(), search.getContent()));
     }
 
 }

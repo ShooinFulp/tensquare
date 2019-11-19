@@ -1,5 +1,7 @@
 package com.tensquare.base.pojo;
 
+import org.springframework.data.jpa.domain.Specification;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,6 +24,9 @@ public class Lable {
     private Long count;//使用数量
     private Long fans;//关注数
     private String recommend;//是否推荐
+
+    public Lable() {
+    }
 
     public Lable(String id, String labelname, String state, Long count, Long fans, String recommend) {
         this.id = id;

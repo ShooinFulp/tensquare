@@ -60,7 +60,7 @@ public class LableService {
     }
 
     public Page<Lable> search(Lable lable, int page, int size) {
-        PageRequest of = PageRequest.of(page, size);
+        PageRequest of = PageRequest.of(page-1, size);
         return lableDao.findAll(createSpecification(lable), of);
     }
 

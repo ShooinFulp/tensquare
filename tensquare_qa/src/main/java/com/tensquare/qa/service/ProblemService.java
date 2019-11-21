@@ -12,6 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 
+import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,6 +105,20 @@ public class ProblemService {
 	 */
 	public void deleteById(String id) {
 		problemDao.deleteById(id);
+	}
+
+	public  Page<Problem> findNewListByLabelId(String labelId,int page ,int size){
+		PageRequest pageRequest = PageRequest.of(page - 1, size);
+		return  problemDao.findNewListByLabelId(labelId,pageRequest);
+	}
+
+	public  Page<Problem> findHotListByLabelId(String labelId,int page,int size){
+		PageRequest pageRequest = PageRequest.of(page - 1, size);
+		return problemDao.findHotListByLabelId(labelId,pageRequest);
+	}
+
+	public  Page<Problem> findWaitListByLabelId (String label,int page,int size){
+		return problemDao.findWaitListByLabelId(label,  PageRequest.of(page - 1, size));
 	}
 
 	/**

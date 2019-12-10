@@ -19,8 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.ObjectUtils;
 import util.IdWorker;
 
 import com.tensquare.user.dao.UserDao;
@@ -46,12 +48,33 @@ public class UserService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-	/**
-	 * 注册用户
-	 * @param user
-	 * @param code
-	 */
-	public void add(User user, String code) {
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    /**
+     * 用户登录
+     *
+     * @param user
+     * @return
+     */
+    public User login(User user) {
+        User byMobile = userDao.findByMobile(user.getMobile());
+        if (ObjectUtils.isEmpty(byMobile)) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (encoder.matches(user.getPassword(), byMobile.getPassword())) {
+            return byMobile;
+        }
+        return null;
+    }
+
+    /**
+     * 注册用户
+     *
+     * @param user
+     * @param code
+     */
+    public void add(User user, String code) {
         String redisCode = (String) redisTemplate.opsForValue().get("smscode_" + user.getMobile());
         if (StringUtils.isEmpty(redisCode)) {
             throw new RuntimeException("请点击获取验证码");
@@ -59,6 +82,7 @@ public class UserService {
         if (!code.equals(redisCode)) {
             throw new RuntimeException("验证码不正确");
         }
+        user.setPassword(encoder.encode(user.getPassword()));
         user.setId(idWorker.nextId() + "");
         user.setFollowcount(0);
         user.setFanscount(0);
@@ -76,7 +100,7 @@ public class UserService {
      * @param mobile
      */
     public void sendSms(String mobile) {
-        String smsCode = RandomStringUtils.random(6);
+        String smsCode = "123456";//RandomStringUtils.random(6);
         redisTemplate.opsForValue().set("smscode_" + mobile, smsCode, 5, TimeUnit.MINUTES);
         Map<String, String> map = new HashMap<>();
         map.put("mobile", mobile);

@@ -15,3 +15,7 @@ spring:
     host: 192.168.236.129
   rabbitmq:
     host: 192.168.236.129
+jwt:
+  config:
+    key: fuli
+    ttl: 360000

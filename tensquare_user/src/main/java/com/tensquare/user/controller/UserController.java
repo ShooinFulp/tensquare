@@ -3,8 +3,10 @@ package com.tensquare.user.controller;
 import java.util.List;
 import java.util.Map;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,8 @@ import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * user控制器层
  *
@@ -31,6 +35,15 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Result login(@RequestBody User user) {
+        User login = userService.login(user);
+        if (ObjectUtils.isEmpty(login)) {
+            return new Result(false, StatusCode.LOGINERROR.getCode(), StatusCode.LOGINERROR.getMsg());
+        }
+        return new Result(false, StatusCode.OK.getCode(), "登录成功！");
+    }
 
     @RequestMapping(value = "/register/{code}", method = RequestMethod.POST)
     public Result register(@RequestBody User user, @PathVariable String code) {
@@ -126,7 +139,11 @@ public class UserController {
      * @param id
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public Result delete(@PathVariable String id) {
+    public Result delete(@PathVariable String id, HttpServletRequest request) {
+        Claims admin_claims = (Claims) request.getAttribute("admin_claims");
+        if (ObjectUtils.isEmpty(admin_claims)) {
+            return new Result(false, StatusCode.ACCESSERROR.getCode(), StatusCode.ACCESSERROR.getMsg());
+        }
         userService.deleteById(id);
         return new Result(true, StatusCode.OK.getCode(), "删除成功");
     }

@@ -11,8 +11,10 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
+import javax.servlet.http.HttpServletRequest;
 
 import entity.PageResult;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.ObjectUtils;
 import util.IdWorker;
 
 import com.tensquare.qa.dao.ProblemDao;
@@ -40,6 +43,8 @@ public class ProblemService {
 	@Autowired
 	private IdWorker idWorker;
 
+	@Autowired
+	private HttpServletRequest request;
 	/**
 	 * 查询全部列表
 	 * @return
@@ -87,7 +92,12 @@ public class ProblemService {
 	 * @param problem
 	 */
 	public void add(Problem problem) {
-		// problem.setId( idWorker.nextId()+"" ); 雪花分布式ID生成器
+		Claims claims = (Claims) request.getAttribute("user_claims");
+		if (ObjectUtils.isEmpty(claims)){
+			throw new RuntimeException("权限不足");
+		}
+		problem.setUserid(claims.getId());
+		problem.setId( idWorker.nextId()+"" );// 雪花分布式ID生成器
 		problemDao.save(problem);
 	}
 

@@ -1,5 +1,6 @@
 package com.tensquare.user.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.tensquare.user.service.UserService;
 import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
+import util.JwtUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,13 +38,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result login(@RequestBody User user) {
         User login = userService.login(user);
         if (ObjectUtils.isEmpty(login)) {
             return new Result(false, StatusCode.LOGINERROR.getCode(), StatusCode.LOGINERROR.getMsg());
         }
-        return new Result(false, StatusCode.OK.getCode(), "登录成功！");
+        String token = jwtUtil.createJwt(login.getId(), login.getNickname(), "user");
+        Map map = new HashMap();
+        map.put("token", token);
+        map.put("name", user.getNickname());
+        map.put("avatar", user.getAvatar());
+        return new Result(false, StatusCode.OK.getCode(), "登录成功！", map);
     }
 
     @RequestMapping(value = "/register/{code}", method = RequestMethod.POST)

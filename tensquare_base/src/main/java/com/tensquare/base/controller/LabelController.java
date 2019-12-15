@@ -21,8 +21,8 @@ import javax.persistence.Id;
  * @date: 2019/11/15 14:56
  */
 @RestController
-@RequestMapping("/lable")
-public class LableController {
+@RequestMapping("/label")
+public class LabelController {
 
     @Autowired
     private LableService lableService;

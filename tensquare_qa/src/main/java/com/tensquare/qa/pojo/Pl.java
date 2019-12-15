@@ -3,6 +3,7 @@ package com.tensquare.qa.pojo;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 〈中间表pl〉
@@ -12,7 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "tb_pl")
-public class Pl {
+public class Pl implements Serializable {
     @Id
     private String problemid;
     @Id

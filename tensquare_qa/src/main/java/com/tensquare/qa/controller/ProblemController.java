@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.qos.logback.classic.turbo.TurboFilter;
+import com.tensquare.qa.client.LabelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +34,13 @@ public class ProblemController {
     @Autowired
     private ProblemService problemService;
 
+    @Autowired
+    private LabelClient labelClient;
+
+    @RequestMapping(value = "/label/{id}", method = RequestMethod.GET)
+    public Result findLabelById(@PathVariable("id") String id) {
+        return labelClient.findById(id);
+    }
 
     /**
      * 查询全部数据
@@ -117,22 +125,22 @@ public class ProblemController {
 
     @RequestMapping(value = "/newlist/{labelid}/{page}/{size}", method = RequestMethod.GET)
     public Result newList(@PathVariable String labelid, @PathVariable int page, int size) {
-		Page<Problem> newListByLabelId = problemService.findNewListByLabelId(labelid, page, size);
-		PageResult<Problem> pageResult = new PageResult<>(newListByLabelId.getTotalElements(),newListByLabelId.getContent());
-		return  new Result(true,StatusCode.OK.getCode(),StatusCode.OK.getMsg(),pageResult);
+        Page<Problem> newListByLabelId = problemService.findNewListByLabelId(labelid, page, size);
+        PageResult<Problem> pageResult = new PageResult<>(newListByLabelId.getTotalElements(), newListByLabelId.getContent());
+        return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), pageResult);
     }
 
-	@RequestMapping(value = "/hotlist/{labelid}/{page}/{size}", method = RequestMethod.GET)
-	public Result hotlist(@PathVariable String labelid, @PathVariable int page, int size) {
-		Page<Problem> hotListByLabelId = problemService.findHotListByLabelId(labelid, page, size);
-		PageResult<Problem> pageResult = new PageResult<>(hotListByLabelId.getTotalElements(),hotListByLabelId.getContent());
-		return  new Result(true,StatusCode.OK.getCode(),StatusCode.OK.getMsg(),pageResult);
-	}
+    @RequestMapping(value = "/hotlist/{labelid}/{page}/{size}", method = RequestMethod.GET)
+    public Result hotlist(@PathVariable String labelid, @PathVariable int page, int size) {
+        Page<Problem> hotListByLabelId = problemService.findHotListByLabelId(labelid, page, size);
+        PageResult<Problem> pageResult = new PageResult<>(hotListByLabelId.getTotalElements(), hotListByLabelId.getContent());
+        return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), pageResult);
+    }
 
-	@RequestMapping(value = "/awitlist/{labelid}/{page}/{size}", method = RequestMethod.GET)
-	public Result awitlist(@PathVariable String labelid, @PathVariable int page, int size) {
-		Page<Problem> waitListByLabelId = problemService.findWaitListByLabelId(labelid, page, size);
-		PageResult<Problem> pageResult = new PageResult<>(waitListByLabelId.getTotalElements(),waitListByLabelId.getContent());
-		return  new Result(true,StatusCode.OK.getCode(),StatusCode.OK.getMsg(),pageResult);
-	}
+    @RequestMapping(value = "/awitlist/{labelid}/{page}/{size}", method = RequestMethod.GET)
+    public Result awitlist(@PathVariable String labelid, @PathVariable int page, int size) {
+        Page<Problem> waitListByLabelId = problemService.findWaitListByLabelId(labelid, page, size);
+        PageResult<Problem> pageResult = new PageResult<>(waitListByLabelId.getTotalElements(), waitListByLabelId.getContent());
+        return new Result(true, StatusCode.OK.getCode(), StatusCode.OK.getMsg(), pageResult);
+    }
 }

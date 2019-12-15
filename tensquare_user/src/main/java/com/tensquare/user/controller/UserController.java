@@ -41,6 +41,16 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @RequestMapping(value = "/incfollow/{userid}/{x}", method = RequestMethod.POST)
+    public void incFollowcount(@PathVariable String userid, @PathVariable int x) {
+        userService.incFollowcount(userid, x);
+    }
+
+    @RequestMapping(value = "/incFans/{userid}/{x}", method = RequestMethod.POST)
+    public void incFans(@PathVariable String userid, @PathVariable int x) {
+        userService.incFanscount(userid, x);
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result login(@RequestBody User user) {
         User login = userService.login(user);

@@ -9,6 +9,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,28 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
+    /**
+     * 更新关注数
+     *
+     * @param userid
+     * @param x
+     */
+    @Transactional
+    public void incFollowcount(String userid, int x) {
+        userDao.incFollowcount(userid, x);
+    }
+
+    /**
+     * 更新粉丝数
+     *
+     * @param userid
+     * @param x
+     */
+    @Transactional
+    public void incFanscount(String userid, int x) {
+        userDao.incFanscount(userid, x);
+    }
 
     /**
      * 用户登录
